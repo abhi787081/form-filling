@@ -1,0 +1,459 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Contact Form - Formspree</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 8s infinite linear;
+        }
+        
+        @keyframes pulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: color 0.3s;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .file-upload-container {
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+        
+        .file-upload-container:hover {
+            border-color: #3498db;
+            background-color: #f0f8ff;
+        }
+        
+        .file-upload-container i {
+            font-size: 40px;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-container p {
+            margin-bottom: 15px;
+            color: #7f8c8d;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-list {
+            margin-top: 10px;
+            text-align: left;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e8f4fc;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .file-item span {
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .remove-file {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn:disabled::before {
+            display: none;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            animation: popIn 0.5s ease-out;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .success {
+            background: #d4f8e8;
+            color: #27ae60;
+            display: block;
+        }
+        
+        .error {
+            background: #fde8e8;
+            color: #e74c3c;
+            display: block;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #7f8c8d;
+            display: none;
+        }
+        
+        .debug-toggle {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-paper-plane"></i> Contact Us</h1>
+            <p>Fixed Formspree Integration</p>
+        </div>
+        
+        <div class="form-container">
+            <!-- Simple Formspree Form - No JavaScript Required -->
+            <form id="contactForm" action="https://formspree.io/f/xeorejnj" method="POST">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Your Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Your mobile no</label>
+                    <input type="mobile" id="mobile no" name="mobile no" required>
+                </div>
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Your Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject"><i class="fas fa-tag"></i> Subject</label>
+                    <select id="subject" name="subject" required>
+                        <option value="" disabled selected>Select a subject</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Support">Support</option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="Feedback">Feedback</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message"><i class="fas fa-comment"></i> Your Message</label>
+                    <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+                
+                <div id="statusMessage" class="status-message"></div>
+            </form>
+            
+            <div class="form-footer">
+                <p>We typically respond within 24 hours</p>
+                
+            </div>
+            
+            <div class="debug-info" id="debugInfo"></div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const debugToggle = document.getElementById('debugToggle');
+        const debugInfo = document.getElementById('debugInfo');
+        
+        // Toggle debug info
+        debugToggle.addEventListener('click', () => {
+            if (debugInfo.style.display === 'none' || debugInfo.style.display === '') {
+                debugInfo.style.display = 'block';
+                debugToggle.textContent = 'Hide Debug Info';
+            } else {
+                debugInfo.style.display = 'none';
+                debugToggle.textContent = 'Show Debug Info';
+            }
+        });
+        
+        // Enhanced form submission with AJAX
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> Sending...';
+            statusMessage.style.display = 'none';
+            
+            // Collect form data
+            const formData = new FormData(this);
+            
+            // Send form using Fetch API
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Success
+                    statusMessage.textContent = 'Message sent successfully! We will get back to you soon.';
+                    statusMessage.className = 'status-message success';
+                    statusMessage.style.display = 'block';
+                    
+                    // Reset form
+                    contactForm.reset();
+                } else {
+                    // Error
+                    return response.json().then(err => {
+                        throw new Error(err.error || 'Form submission failed');
+                    });
+                }
+            })
+            .catch(error => {
+                // Show error message
+                console.error('Form submission error:', error);
+                statusMessage.textContent = 'Failed to send message: ' + error.message;
+                statusMessage.className = 'status-message error';
+                statusMessage.style.display = 'block';
+            })
+            .finally(() => {
+                // Reset button after delay
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+                }, 3000);
+            });
+        });
+        
+        // Alternative: Standard form submission (no JavaScript)
+        // This form will work even if JavaScript is disabled
+        // Remove the event listener above to use standard form submission
+    </script>
+</body>
+</html>
